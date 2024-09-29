@@ -29,7 +29,7 @@ public class Instructor
 
     [Display(Name = "Hiring Date")]
     [DataType(DataType.Date)]
-    public DateTime HiringDate { get; set; }
+    public DateTime? HiringDate { get; set; }
 
 
     [RegularExpression(@"^\d{3}-\d{3}-\d{4}$", ErrorMessage = "Phone number must be in the format xxx-xxx-xxxx")]
@@ -44,7 +44,6 @@ public class Instructor
     [Display(Name = "Personal webpage")]
     public String? PersonalUrl { get; set; }
 
-    [Required]
     [StringLength(10, MinimumLength = 5)]
     [Display(Name = "Password (we wont use this in the project)")]
     [DataType(DataType.Password)]
