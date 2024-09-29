@@ -21,31 +21,38 @@
 
 <body>
     <h1>Liste des profs</h1>
-    <table class="table table-dark table-hover">
-        <thead>
-            <tr>
-                <th>Prénom</th>
-                <th>Nom de famille</th>
-                <th>Grade</th>
-                <th>Details</th>
-                <th>Details</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var instructor in Model)
-            {
+    @if (Model.Count() > 0)
+    {
+        <table class="table table-dark table-hover">
+            <thead>
                 <tr>
-                    <td>@instructor.FirstName</td>
-                    <td>@instructor.LastName</td>
-                    <td>@instructor.Rank</td>
-
-                    <TD>@Html.ActionLink("details", "ShowDetails", new { id = @instructor.InstructorId })</TD>
-                    <TD><a asp-action="ShowDetails" asp-route-id="@instructor.InstructorId"> details</a> </TD>
-
+                    <th>Prénom</th>
+                    <th>Nom de famille</th>
+                    <th>Grade</th>
+                    <th>Details</th>
+                    <th>Details</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var instructor in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(m => instructor.FirstName)</td>
+                        <td>@Html.DisplayFor(m => instructor.LastName)</td>
+                        <td>@Html.DisplayFor(m => instructor.Rank)</td>
+
+                        <TD>@Html.ActionLink("details", "ShowDetails", new { id = @instructor.InstructorId })</TD>
+                        <TD><a asp-action="ShowDetails" asp-route-id="@instructor.InstructorId"> details</a> </TD>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Il n'y a pas de profs</p>
+    }
 </body>
 
 </html>

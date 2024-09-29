@@ -11,16 +11,28 @@
 
 <body>
     <h1>Instructor @Model.LastName details</h1>
-    <p>First name: @Model.FirstName</p>
-    <p>Last name: @Model.LastName</p>
-    <p>Is tenured: @Model.IsTenured</p>
-    <p>Academic rank: @Model.Rank</p>
-    <p>Hiring date: @Model.HiringDate</p>
 
-    <p>
-        <a asp-action="Index">go to Index</a>
-        <br />
-        @Html.ActionLink("go to Index", "Index")
+
+    @*{
+    let's use data annotations now }
+    *@
+    <p><label asp-for="FirstName"></label>: @Html.DisplayFor(model => model.FirstName)</p>
+    <p> <label asp-for="LastName"></label>
+        : @Html.DisplayFor(model => model.LastName)</p>
+    <p> <label asp-for="IsTenured"></label>
+        : @Html.DisplayFor(model => model.IsTenured)</p>
+    <p> <label asp-for="Rank"></label>
+        : @Html.DisplayFor(model => model.Rank)</p>
+    <p>: @Html.DisplayFor(model => model.HiringDate)</p>
+
+    @*{
+    same with the use of labels and asp-for now
+    }*@
+
+
+    <a asp-action="Index">go to Index</a>
+    <br />
+    @Html.ActionLink("go to Index", "Index")
     </p>
 </body>
 
