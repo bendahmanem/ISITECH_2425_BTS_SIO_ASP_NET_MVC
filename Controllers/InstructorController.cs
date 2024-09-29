@@ -1,37 +1,46 @@
 using ASPBookProject.Models;
+using ASPBookProject.Services.FakeDataService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ASPBookProject.Controllers
 {
     public class InstructorController : Controller
     {
+        // Injection de dependance
+        private readonly IFakeDataService _fakeDataService;
 
         // Sample Data
-        List<Instructor> InstructorsList = new List<Instructor>()
-            {
-                new Instructor() {
-                    InstructorId = 100,
-                FirstName = "Maegan", LastName = "Borer",
-                IsTenured=false, HiringDate=DateTime.Parse("2018-08-15"),
-                Rank = Ranks.AssistantProfessor},
-                new Instructor() {InstructorId = 200,
-                FirstName = "Antonietta ", LastName = "Emmerich",
-                IsTenured=true, HiringDate=DateTime.Parse("2022-08-15"),
-                Rank = Ranks.AssociateProfessor},
-                new Instructor() {InstructorId = 300,
-                FirstName = "Antonietta", LastName = "Lesch",
-                IsTenured=false, HiringDate=DateTime.Parse("2015-01-09"),
-                Rank = Ranks.FullProfessor},
-                new Instructor() {InstructorId = 400,
-                FirstName = "Anjali", LastName = "Jakubowski",
-                IsTenured=true, HiringDate=DateTime.Parse("2016-01-10"),
-                Rank = Ranks.Adjunct}
-            };
+        // List<Instructor> InstructorsList = new List<Instructor>()
+        //     {
+        //         new Instructor() {
+        //             InstructorId = 100,
+        //         FirstName = "Maegan", LastName = "Borer",
+        //         IsTenured=false, HiringDate=DateTime.Parse("2018-08-15"),
+        //         Rank = Ranks.AssistantProfessor},
+        //         new Instructor() {InstructorId = 200,
+        //         FirstName = "Antonietta ", LastName = "Emmerich",
+        //         IsTenured=true, HiringDate=DateTime.Parse("2022-08-15"),
+        //         Rank = Ranks.AssociateProfessor},
+        //         new Instructor() {InstructorId = 300,
+        //         FirstName = "Antonietta", LastName = "Lesch",
+        //         IsTenured=false, HiringDate=DateTime.Parse("2015-01-09"),
+        //         Rank = Ranks.FullProfessor},
+        //         new Instructor() {InstructorId = 400,
+        //         FirstName = "Anjali", LastName = "Jakubowski",
+        //         IsTenured=true, HiringDate=DateTime.Parse("2016-01-10"),
+        //         Rank = Ranks.Adjunct}
+        //     };
+
+        // Constructor Injection
+        public InstructorController(IFakeDataService fakeDataService)
+        {
+            _fakeDataService = fakeDataService;
+        }
 
         // GET: InstructorController
         public IActionResult Index()
         {
-            return View(InstructorsList); // retourne la vue Index.cshtml
+            return View(_fakeDataService.InstructorsList); // retourne la vue Index.cshtml
         }
 
 
@@ -40,12 +49,13 @@ namespace ASPBookProject.Controllers
             // Par defaut la methode Index renvoie vers la vue Index
             // Si on souhaite retourner une vue avec un nom different
             // de celui de l'action on procede ainsi
-            return View("Index", InstructorsList); // retourne la vue Index.cshtml
+            // return View("Index", _fakeDataService.InstructorsList); // retourne la vue Index.cshtml
+            return View("Index");
         }
 
         public IActionResult ShowAll()
         {
-            return RedirectToAction("Index", InstructorsList); // Redirection!
+            return RedirectToAction("Index", _fakeDataService.InstructorsList); // Redirection!
         }
 
 
@@ -57,8 +67,9 @@ namespace ASPBookProject.Controllers
         [HttpPost]
         public IActionResult Add(Instructor instructor)
         {
-            InstructorsList.Add(instructor);
-            return View("Index", InstructorsList); // retourne la vue Index.cshtml avec la nouvelle liste
+            _fakeDataService.InstructorsList.Add(instructor);
+            // return View("Index", _fakeDataService.InstructorsList); // retourne la vue Index.cshtml avec la nouvelle liste
+            return RedirectToAction("Index");
         }
 
 
@@ -66,7 +77,7 @@ namespace ASPBookProject.Controllers
         public IActionResult Edit(int id)
         {
             // Return View au sein de l'action Edit retournera la vue Edit.cshtml
-            Instructor? intrs = InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
+            Instructor? intrs = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
 
             if (intrs != null)
             {
@@ -80,7 +91,7 @@ namespace ASPBookProject.Controllers
         [HttpPost]
         public IActionResult Edit(Instructor instructor)
         {
-            Instructor? instr = InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == instructor.InstructorId);
+            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == instructor.InstructorId);
 
             if (instr != null)
             {
@@ -90,7 +101,8 @@ namespace ASPBookProject.Controllers
                 instr.HiringDate = instructor.HiringDate;
                 instr.Rank = instructor.Rank;
 
-                return View("Index", InstructorsList);
+                // return View("Index", _fakeDataService.InstructorsList);
+                return RedirectToAction("Index");
             }
 
             return NotFound();
@@ -103,7 +115,7 @@ namespace ASPBookProject.Controllers
 
         public IActionResult ShowDetails(int id)
         {
-            Instructor? instr = InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
+            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
 
 
             if (instr != null)

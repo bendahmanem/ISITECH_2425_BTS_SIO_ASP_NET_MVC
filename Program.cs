@@ -1,11 +1,16 @@
 // set up the basic features of the ASP.NET Core platform
 
+using ASPBookProject.Services.FakeDataService;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllersWithViews();
 
+
+
 // Enregistrement d'un service 
+builder.Services.AddSingleton<IFakeDataService, FakeDataService>();
 // Assurez vous que cette ligne soit placée avant : var app = builder.Build();
 //builder.Services.AddSingleton<IMyFirstService, MyFirstService>();
 // Nous n'avons maintenant plus à nous soucier à creer une instance de MyFristServie
