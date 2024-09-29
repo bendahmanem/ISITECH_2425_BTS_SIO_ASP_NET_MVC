@@ -28,4 +28,19 @@ public class Instructor
     [Display(Name = "Hiring Date")]
     [DataType(DataType.Date)]
     public DateTime HiringDate { get; set; }
+
+    [Display(Name = "Office Phone Number")]
+    public String? PhoneNumber { get; set; }
+
+    [Display(Name = "Email Address")]
+    public String? EmailAddress { get; set; }
+
+    [Display(Name = "Personal webpage")]
+    public String? PersonalUrl { get; set; }
+
+    [Display(Name = "Password (we wont use this in the project)")]
+    [DataType(DataType.Password)]
+    public String? Password { get; set; }
+
+
 }

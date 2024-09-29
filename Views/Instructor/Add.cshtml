@@ -45,6 +45,31 @@ For more information on enabling MVC for empty projects, visit https://go.micros
         <div class="form-group">
             <label asp-for="HiringDate"></label> <input asp-for="HiringDate" class="form-control" />
         </div>
+
+        @* Phone number *@
+        <div class="form-group">
+            <label asp-for="PhoneNumber"></label>
+            <input asp-for="PhoneNumber">
+        </div>
+
+        @* Email address *@
+        <div class="form-group">
+            <label asp-for="EmailAddress"></label>
+            <input asp-for="EmailAddress">
+        </div>
+
+        @* Personal url *@
+        <div class="form-group">
+            <label asp-for="PersonalUrl"></label>
+            <input asp-for="PersonalUrl">
+        </div>
+
+        @* Unused password *@
+        <div class="form-group">
+            <label asp-for="Password"></label>
+            <input asp-for="Password">
+        </div>
+
         <br />
         <br />
         <input type="submit" value="Create Instructor" class="btn btn-primary" />
