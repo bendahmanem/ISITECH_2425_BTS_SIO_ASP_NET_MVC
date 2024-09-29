@@ -1,6 +1,8 @@
 // set up the basic features of the ASP.NET Core platform
 
+using ASPBookProject.Data;
 using ASPBookProject.Services.FakeDataService;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,9 +19,19 @@ builder.Services.AddSingleton<IFakeDataService, FakeDataService>();
 // au sein de notre application, le service d'injection de dependance s'en
 // chargera pour nous ! 
 
+var serverVersion = new MySqlServerVersion(new Version(11, 0, 2));
+
+// Ajout du dbcontext au service container
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), serverVersion)
+);
+
 // set up middleware components
 var app = builder.Build();
 
+// Verification que la base de donnees est creee
+var context = app.Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
+context.Database.EnsureCreated();
 
 // Par défaut les fichiers contenus au sein du dossier wwwroot ne 
 // sont pas accessible coté client

@@ -13,6 +13,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<Instructor> Instructors { get; set; }
 
 
+    // Constructeur
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
+
+
     // Ajout de mock data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
