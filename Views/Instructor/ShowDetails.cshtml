@@ -1,0 +1,27 @@
+﻿@model Instructor
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Instructor @Model.LastName Details</title>
+</head>
+
+<body>
+    <h1>Instructor @Model.LastName details</h1>
+    <p>First name: @Model.FirstName</p>
+    <p>Last name: @Model.LastName</p>
+    <p>Is tenured: @Model.IsTenured</p>
+    <p>Academic rank: @Model.Rank</p>
+    <p>Hiring date: @Model.HiringDate</p>
+
+    <p>
+        <a asp-action="Index">go to Index</a>
+        <br />
+        @Html.ActionLink("go to Index", "Index")
+    </p>
+</body>
+
+</html>
