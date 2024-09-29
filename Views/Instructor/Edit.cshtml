@@ -21,10 +21,14 @@
 
         <div class="form-group">
             <label asp-for="FirstName"></label> <input asp-for="FirstName" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="FirstName" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="LastName"></label> <input asp-for="LastName" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
 
 
@@ -33,10 +37,14 @@
             <select asp-for="Rank" asp-items="@Html.GetEnumSelectList(typeof(Ranks))" class="form-control">
                 <option value="">Select Rank</option>
             </select>
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="Rank" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="HiringDate"></label> <input asp-for="HiringDate" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="HiringDate" class="text-danger"></span>
         </div>
 
         <br />
@@ -45,6 +53,9 @@
         <input type="submit" value="Save changes" class="btn btn-primary" />
         <input type="button" onclick="history.back()" value="Cancel" class="btn btn-secondary" />
     </form>
+
+    @* Permet de visualiser le resume de l'ensemble des erreurs de validation, ceci est un tag helper *@
+    <div asp-validation-summary="All" class="text-danger"></div>
 
 </body>
 

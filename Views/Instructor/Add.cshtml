@@ -21,18 +21,26 @@ For more information on enabling MVC for empty projects, visit https://go.micros
     <form asp-action="Add" asp-controller="Instructor" method="post">
         <div class="form-group">
             <label asp-for="InstructorId"></label> <input asp-for="InstructorId" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="InstructorId" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="FirstName"></label> <input asp-for="FirstName" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="FirstName" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="LastName"></label> <input asp-for="LastName" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="LastName" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="IsTenured"></label> <input asp-for="IsTenured" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="IsTenured" class="text-danger"></span>
         </div>
 
         <div class="form-group">
@@ -40,38 +48,53 @@ For more information on enabling MVC for empty projects, visit https://go.micros
             <select asp-for="Rank" asp-items="@Html.GetEnumSelectList(typeof(Ranks))" class="form-control">
                 <option value="">Select Rank</option>
             </select>
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="Rank" class="text-danger"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="HiringDate"></label> <input asp-for="HiringDate" class="form-control" />
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="HiringDate" class="text-danger"></span>
         </div>
 
         @* Phone number *@
         <div class="form-group">
             <label asp-for="PhoneNumber"></label>
             <input asp-for="PhoneNumber">
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
 
         @* Email address *@
         <div class="form-group">
             <label asp-for="EmailAddress"></label>
             <input asp-for="EmailAddress">
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="EmailAddress" class="text-danger"></span>
         </div>
 
         @* Personal url *@
         <div class="form-group">
             <label asp-for="PersonalUrl"></label>
             <input asp-for="PersonalUrl">
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="PersonalUrl" class="text-danger"></span>
         </div>
 
         @* Unused password *@
         <div class="form-group">
             <label asp-for="Password"></label>
             <input asp-for="Password">
+            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+            <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
         <br />
         <br />
         <input type="submit" value="Create Instructor" class="btn btn-primary" />
     </form>
+
+    @* Permet de visualiser le resume de l'ensemble des erreurs de validation, ceci est un tag helper *@
+    <div asp-validation-summary="All" class="text-danger"></div>
 </body>
