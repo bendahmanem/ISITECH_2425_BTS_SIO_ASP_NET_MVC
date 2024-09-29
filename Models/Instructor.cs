@@ -23,7 +23,7 @@ public class Instructor
     [Display(Name = "Is Tenured")]
     public bool IsTenured { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Rank is required")]
     [Display(Name = "Rank")]
     public Ranks Rank { get; set; }
 
