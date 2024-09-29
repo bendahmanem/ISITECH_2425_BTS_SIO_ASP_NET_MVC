@@ -10,5 +10,10 @@ namespace ASPBookProject.Controllers
             return Content("Hello World from Index action, HomeController");
         }
 
+        public string SecondAction(int id)
+        {
+            return $"({id})^2 = {id * id}";
+        }
+
     }
 }

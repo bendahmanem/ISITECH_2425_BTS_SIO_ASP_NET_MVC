@@ -33,9 +33,6 @@ app.UseStaticFiles(); // give access to files in wwwroot
 
 app.UseRouting();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"
-);
+app.MapDefaultControllerRoute();
 
 app.Run();
