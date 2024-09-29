@@ -67,6 +67,12 @@ namespace ASPBookProject.Controllers
         [HttpPost]
         public IActionResult Add(Instructor instructor)
         {
+            // verification de la validite du model avec ModelState
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             _fakeDataService.InstructorsList.Add(instructor);
             // return View("Index", _fakeDataService.InstructorsList); // retourne la vue Index.cshtml avec la nouvelle liste
             return RedirectToAction("Index");
@@ -76,6 +82,7 @@ namespace ASPBookProject.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
+
             // Return View au sein de l'action Edit retournera la vue Edit.cshtml
             Instructor? intrs = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
 
@@ -91,6 +98,12 @@ namespace ASPBookProject.Controllers
         [HttpPost]
         public IActionResult Edit(Instructor instructor)
         {
+            // verification de la validite du model avec ModelState
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == instructor.InstructorId);
 
             if (instr != null)
