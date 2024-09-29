@@ -32,6 +32,7 @@
                     <th>Details (Html Helper)</th>
                     <th>Details (tag helper) </th>
                     <th>Edit</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,6 +48,8 @@
 
 
                         <TD><a asp-action="Edit" asp-route-id="@instructor.InstructorId"> edit this</a> </TD>
+
+                        <TD><a asp-action="Delete" asp-route-id="@instructor.InstructorId"> delete this</a> </TD>
 
                     </tr>
                 }

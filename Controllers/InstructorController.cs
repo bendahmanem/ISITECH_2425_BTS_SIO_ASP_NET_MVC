@@ -108,11 +108,40 @@ namespace ASPBookProject.Controllers
             return NotFound();
         }
 
+        [HttpGet]
         public IActionResult Delete(int id)
         {
-            return View();
+            // On recherche l'instructeur à supprimer avec l'id fourni en paramètre
+            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
+
+            if (instr != null) // Si l'instructeur est trouvé
+            {
+                return View(instr); // On retourne la vue Delete.cshtml avec l'instructeur à supprimer
+            }
+            // Si l'instructeur n'est pas trouvé on retourne une erreur 404
+            return NotFound();
+            //return View();
         }
 
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int InstructorId)
+
+        {
+            // On recherche l'instructeur à supprimer avec l'id fourni en paramètre
+            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == InstructorId);
+
+
+            if (instr != null) // Si l'instructeur est trouvé
+            {
+                _fakeDataService.InstructorsList.Remove(instr); // On le supprime de la liste
+                // return View("Index", _fakeDataService.InstructorsList); // On retourne la vue Index.cshtml avec la nouvelle liste
+                return RedirectToAction("Index");
+            }
+            // Si l'instructeur n'est pas trouvé on retourne une erreur 404
+            return NotFound();
+        }
+
+        [HttpGet]
         public IActionResult ShowDetails(int id)
         {
             Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
