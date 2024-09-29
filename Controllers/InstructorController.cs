@@ -48,15 +48,52 @@ namespace ASPBookProject.Controllers
             return RedirectToAction("Index", InstructorsList); // Redirection!
         }
 
+
+        [HttpGet]
         public IActionResult Add()
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult Add(Instructor instructor)
+        {
+            InstructorsList.Add(instructor);
+            return View("Index", InstructorsList); // retourne la vue Index.cshtml avec la nouvelle liste
+        }
 
+
+        [HttpGet]
         public IActionResult Edit(int id)
         {
             // Return View au sein de l'action Edit retournera la vue Edit.cshtml
-            return View();
+            Instructor? intrs = InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
+
+            if (intrs != null)
+            {
+                return View(intrs);
+            }
+
+            return NotFound();
+
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Instructor instructor)
+        {
+            Instructor? instr = InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == instructor.InstructorId);
+
+            if (instr != null)
+            {
+                instr.FirstName = instructor.FirstName;
+                instr.LastName = instructor.LastName;
+                instr.IsTenured = instructor.IsTenured;
+                instr.HiringDate = instructor.HiringDate;
+                instr.Rank = instructor.Rank;
+
+                return View("Index", InstructorsList);
+            }
+
+            return NotFound();
         }
 
         public IActionResult Delete(int id)

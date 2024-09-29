@@ -29,8 +29,9 @@
                     <th>Prénom</th>
                     <th>Nom de famille</th>
                     <th>Grade</th>
-                    <th>Details</th>
-                    <th>Details</th>
+                    <th>Details (Html Helper)</th>
+                    <th>Details (tag helper) </th>
+                    <th>Edit</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,6 +45,9 @@
                         <TD>@Html.ActionLink("details", "ShowDetails", new { id = @instructor.InstructorId })</TD>
                         <TD><a asp-action="ShowDetails" asp-route-id="@instructor.InstructorId"> details</a> </TD>
 
+
+                        <TD><a asp-action="Edit" asp-route-id="@instructor.InstructorId"> edit this</a> </TD>
+
                     </tr>
                 }
             </tbody>
@@ -53,6 +57,8 @@
     {
         <p>Il n'y a pas de profs</p>
     }
+
+    <a asp-action="Add">Ajouter un prof</a>
 </body>
 
 </html>

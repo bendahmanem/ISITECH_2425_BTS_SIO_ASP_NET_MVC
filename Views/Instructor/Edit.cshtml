@@ -1,0 +1,51 @@
+﻿@model Instructor
+
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit</title>
+</head>
+
+<body>
+
+    <h1>Edit an instructor profile</h1>
+
+    <form asp-action="Edit" asp-controller="Instructor" method="post">
+
+        <input asp-for="InstructorId" type="hidden" />
+
+        <div class="form-group">
+            <label asp-for="FirstName"></label> <input asp-for="FirstName" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="LastName"></label> <input asp-for="LastName" class="form-control" />
+        </div>
+
+
+
+        <div class="form-group">
+            <select asp-for="Rank" asp-items="@Html.GetEnumSelectList(typeof(Ranks))" class="form-control">
+                <option value="">Select Rank</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="HiringDate"></label> <input asp-for="HiringDate" class="form-control" />
+        </div>
+
+        <br />
+        <br />
+
+        <input type="submit" value="Save changes" class="btn btn-primary" />
+        <input type="button" onclick="history.back()" value="Cancel" class="btn btn-secondary" />
+    </form>
+
+</body>
+
+</html>
