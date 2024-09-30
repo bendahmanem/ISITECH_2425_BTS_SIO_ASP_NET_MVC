@@ -1,3 +1,4 @@
+using ASPBookProject.Data;
 using ASPBookProject.Models;
 using ASPBookProject.Services.FakeDataService;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,8 @@ namespace ASPBookProject.Controllers
     public class InstructorController : Controller
     {
         // Injection de dependance
-        private readonly IFakeDataService _fakeDataService;
-
+        // private readonly IFakeDataService _fakeDataService;
+        private readonly ApplicationDbContext _dbContext;
         // Sample Data
         // List<Instructor> InstructorsList = new List<Instructor>()
         //     {
@@ -32,15 +33,15 @@ namespace ASPBookProject.Controllers
         //     };
 
         // Constructor Injection
-        public InstructorController(IFakeDataService fakeDataService)
+        public InstructorController(ApplicationDbContext dbContext)
         {
-            _fakeDataService = fakeDataService;
+            _dbContext = dbContext;
         }
 
         // GET: InstructorController
         public IActionResult Index()
         {
-            return View(_fakeDataService.InstructorsList); // retourne la vue Index.cshtml
+            return View(_dbContext.Instructors); // retourne la vue Index.cshtml
         }
 
 
@@ -49,13 +50,13 @@ namespace ASPBookProject.Controllers
             // Par defaut la methode Index renvoie vers la vue Index
             // Si on souhaite retourner une vue avec un nom different
             // de celui de l'action on procede ainsi
-            // return View("Index", _fakeDataService.InstructorsList); // retourne la vue Index.cshtml
+            // return View("Index", _dbContext.Instructors); // retourne la vue Index.cshtml
             return View("Index");
         }
 
         public IActionResult ShowAll()
         {
-            return RedirectToAction("Index", _fakeDataService.InstructorsList); // Redirection!
+            return RedirectToAction("Index", _dbContext.Instructors); // Redirection!
         }
 
 
@@ -64,6 +65,7 @@ namespace ASPBookProject.Controllers
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Add(Instructor instructor)
         {
@@ -73,8 +75,9 @@ namespace ASPBookProject.Controllers
                 return View();
             }
 
-            _fakeDataService.InstructorsList.Add(instructor);
-            // return View("Index", _fakeDataService.InstructorsList); // retourne la vue Index.cshtml avec la nouvelle liste
+            _dbContext.Instructors.Add(instructor);
+            _dbContext.SaveChanges();
+            // return View("Index", _dbContext.Instructors); // retourne la vue Index.cshtml avec la nouvelle liste
             return RedirectToAction("Index");
         }
 
@@ -84,7 +87,7 @@ namespace ASPBookProject.Controllers
         {
 
             // Return View au sein de l'action Edit retournera la vue Edit.cshtml
-            Instructor? intrs = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
+            Instructor? intrs = _dbContext.Instructors.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
 
             if (intrs != null)
             {
@@ -104,7 +107,7 @@ namespace ASPBookProject.Controllers
                 return View();
             }
 
-            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == instructor.InstructorId);
+            Instructor? instr = _dbContext.Instructors.FirstOrDefault<Instructor>(ins => ins.InstructorId == instructor.InstructorId);
 
             if (instr != null)
             {
@@ -114,7 +117,9 @@ namespace ASPBookProject.Controllers
                 instr.HiringDate = instructor.HiringDate;
                 instr.Rank = instructor.Rank;
 
-                // return View("Index", _fakeDataService.InstructorsList);
+                _dbContext.SaveChanges();
+
+                // return View("Index", _dbContext.Instructors);
                 return RedirectToAction("Index");
             }
 
@@ -125,7 +130,7 @@ namespace ASPBookProject.Controllers
         public IActionResult Delete(int id)
         {
             // On recherche l'instructeur à supprimer avec l'id fourni en paramètre
-            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
+            Instructor? instr = _dbContext.Instructors.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
 
             if (instr != null) // Si l'instructeur est trouvé
             {
@@ -141,13 +146,14 @@ namespace ASPBookProject.Controllers
 
         {
             // On recherche l'instructeur à supprimer avec l'id fourni en paramètre
-            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == InstructorId);
+            Instructor? instr = _dbContext.Instructors.FirstOrDefault<Instructor>(ins => ins.InstructorId == InstructorId);
 
 
             if (instr != null) // Si l'instructeur est trouvé
             {
-                _fakeDataService.InstructorsList.Remove(instr); // On le supprime de la liste
-                // return View("Index", _fakeDataService.InstructorsList); // On retourne la vue Index.cshtml avec la nouvelle liste
+                _dbContext.Instructors.Remove(instr); // On le supprime de la liste
+                _dbContext.SaveChanges(); // On sauvegarde les modifications
+                // return View("Index", _dbContext.Instructors); // On retourne la vue Index.cshtml avec la nouvelle liste
                 return RedirectToAction("Index");
             }
             // Si l'instructeur n'est pas trouvé on retourne une erreur 404
@@ -157,7 +163,7 @@ namespace ASPBookProject.Controllers
         [HttpGet]
         public IActionResult ShowDetails(int id)
         {
-            Instructor? instr = _fakeDataService.InstructorsList.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
+            Instructor? instr = _dbContext.Instructors.FirstOrDefault<Instructor>(ins => ins.InstructorId == id);
 
 
             if (instr != null)

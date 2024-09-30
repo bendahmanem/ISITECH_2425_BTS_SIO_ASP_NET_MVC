@@ -19,11 +19,11 @@ For more information on enabling MVC for empty projects, visit https://go.micros
     <h1>Create a new Instructor</h1>
 
     <form asp-action="Add" asp-controller="Instructor" method="post">
-        <div class="form-group">
-            <label asp-for="InstructorId"></label> <input asp-for="InstructorId" class="form-control" />
-            @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
-            <span asp-validation-for="InstructorId" class="text-danger"></span>
-        </div>
+        @* <div class="form-group">
+        <label asp-for="InstructorId"></label> <input asp-for="InstructorId" class="form-control" />
+        @* ajout de message d'erreur de validation inline pour chaque propriete individuellement *@
+        @*<span asp-validation-for="InstructorId" class="text-danger"></span>
+        </div> *@
 
         <div class="form-group">
             <label asp-for="FirstName"></label> <input asp-for="FirstName" class="form-control" />
