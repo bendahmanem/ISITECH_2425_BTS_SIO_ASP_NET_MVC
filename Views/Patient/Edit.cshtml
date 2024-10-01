@@ -1,0 +1,70 @@
+﻿// Vue (Edit.cshtml)
+@model PatientEditViewModel
+
+<h2>Éditer Patient</h2>
+
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Patient.PatientId" />
+
+    <div class="form-group">
+        <label asp-for="Patient.Nom_p" class="control-label"></label>
+        <input asp-for="Patient.Nom_p" class="form-control" />
+        <span asp-validation-for="Patient.Nom_p" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Patient.Prenom_p" class="control-label"></label>
+        <input asp-for="Patient.Prenom_p" class="form-control" />
+        <span asp-validation-for="Patient.Prenom_p" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Patient.Sexe_p" class="control-label"></label>
+        <input asp-for="Patient.Sexe_p" class="form-control" />
+        <span asp-validation-for="Patient.Sexe_p" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Patient.Num_secu" class="control-label"></label>
+        <input asp-for="Patient.Num_secu" class="form-control" />
+        <span asp-validation-for="Patient.Num_secu" class="text-danger"></span>
+    </div>
+
+    <h4>Antécédents</h4>
+    <div class="form-group">
+        @foreach (var antecedent in Model.Antecedents)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedAntecedentIds" value="@antecedent.AntecedentId"
+                @(Model.SelectedAntecedentIds != null && Model.SelectedAntecedentIds.Contains(antecedent.AntecedentId) ?
+                    "checked" : "") />
+                <label class="form-check-label">@antecedent.Libelle_a</label>
+            </div>
+        }
+    </div>
+
+    <h4>Allergies</h4>
+    <div class="form-group">
+        @foreach (var allergie in Model.Allergies)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedAllergieIds" value="@allergie.AllergieId"
+                @(Model.SelectedAllergieIds != null && Model.SelectedAllergieIds.Contains(allergie.AllergieId) ? "checked" :
+                    "") />
+                <label class="form-check-label">@allergie.Libelle_al</label>
+            </div>
+        }
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Enregistrer" class="btn btn-primary" />
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Retour à la liste</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

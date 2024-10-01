@@ -31,11 +31,13 @@ public class ApplicationDbContext : DbContext
     {
         modelBuilder.Entity<Patient>()
           .HasMany(p => p.Allergies)
-          .WithMany(a => a.Patients);
+          .WithMany(a => a.Patients)
+          .UsingEntity(j => j.ToTable("AllergiePatient")); ;
 
         modelBuilder.Entity<Patient>()
             .HasMany(p => p.Antecedents)
-            .WithMany(a => a.Patients);
+            .WithMany(a => a.Patients)
+            .UsingEntity(j => j.ToTable("AntecedentPatient")); ;
 
         modelBuilder.Entity<Allergie>()
             .HasMany(a => a.Medicaments)
@@ -93,4 +95,6 @@ public class ApplicationDbContext : DbContext
 
             );
     }
+
+
 }

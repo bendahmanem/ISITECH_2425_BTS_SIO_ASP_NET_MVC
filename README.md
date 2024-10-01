@@ -513,6 +513,140 @@ public InstructorController(SchoolContext context)
 5. Creer une migration avec la commande `dotnet ef migrations add InitialCreate`
 6. Appliquer la migration avec la commande `dotnet ef database update`
 
+## Les vues typees dynamiquement
+
+Dans la section précédente, nous avons vu comment utiliser des vues fortement typées. Dans cette section, nous allons voir comment utiliser des vues typées dynamiquement.
+
+Dans une vue typée dynamiquement, nous n'avons pas de directive @model en haut de la page de la vue. Cela signifie que la vue ne travaille pas avec un modèle spécifique. Cela signifie également que nous ne pouvons pas utiliser les expressions Razor fortement typées (comme @Model.FirstName).
+
+Au lieu de cela, nous devons utiliser des expressions Razor dynamiques. Par exemple, pour afficher le contenu d'une propriété FirstName, nous devons utiliser @ViewData["FirstName"].
+
+## Tuples et ViewModel
+
+Dans la section précédente, nous avons vu comment utiliser des vues typées dynamiquement. Dans cette section, nous allons voir comment utiliser des tuples et des ViewModel.
+
+```csharp
+// Méthode 1 : Utilisation d'un ViewModel
+
+// Étape 1 : Définir vos modèles individuels
+public class ModelUtilisateur
+{
+    public int Id { get; set; }
+    public string Nom { get; set; }
+    public string Email { get; set; }
+}
+
+public class ModelProduit
+{
+    public int Id { get; set; }
+    public string Nom { get; set; }
+    public decimal Prix { get; set; }
+}
+
+// Étape 2 : Créer un ViewModel qui combine les deux modèles
+public class UtilisateurProduitViewModel
+{
+    public ModelUtilisateur Utilisateur { get; set; }
+    public List<ModelProduit> Produits { get; set; }
+}
+
+// Étape 3 : Dans votre contrôleur
+public class AccueilController : Controller
+{
+    public IActionResult Index()
+    {
+        var viewModel = new UtilisateurProduitViewModel
+        {
+            Utilisateur = new ModelUtilisateur { Id = 1, Nom = "Jean Dupont", Email = "jean@exemple.com" },
+            Produits = new List<ModelProduit>
+            {
+                new ModelProduit { Id = 1, Nom = "Produit 1", Prix = 19.99m },
+                new ModelProduit { Id = 2, Nom = "Produit 2", Prix = 29.99m }
+            }
+        };
+
+        return View(viewModel);
+    }
+}
+
+// Étape 4 : Dans votre vue (Index.cshtml)
+@model UtilisateurProduitViewModel
+
+<h2>Informations de l'utilisateur</h2>
+<p>Nom : @Model.Utilisateur.Nom</p>
+<p>Email : @Model.Utilisateur.Email</p>
+
+<h2>Produits</h2>
+<ul>
+    @foreach (var produit in Model.Produits)
+    {
+        <li>@produit.Nom - @produit.Prix €</li>
+    }
+</ul>
+
+// Méthode 2 : Utilisation de Tuple
+
+// Dans votre contrôleur
+public class AccueilController : Controller
+{
+    public IActionResult Index()
+    {
+        var utilisateur = new ModelUtilisateur { Id = 1, Nom = "Jean Dupont", Email = "jean@exemple.com" };
+        var produits = new List<ModelProduit>
+        {
+            new ModelProduit { Id = 1, Nom = "Produit 1", Prix = 19.99m },
+            new ModelProduit { Id = 2, Nom = "Produit 2", Prix = 29.99m }
+        };
+
+        return View((utilisateur, produits));
+    }
+}
+
+// Dans votre vue (Index.cshtml)
+@model (ModelUtilisateur Utilisateur, List<ModelProduit> Produits)
+
+<h2>Informations de l'utilisateur</h2>
+<p>Nom : @Model.Utilisateur.Nom</p>
+<p>Email : @Model.Utilisateur.Email</p>
+
+<h2>Produits</h2>
+<ul>
+    @foreach (var produit in Model.Produits)
+    {
+        <li>@produit.Nom - @produit.Prix €</li>
+    }
+</ul>
+
+```
+
+Permettez-moi d'expliquer ces deux méthodes :
+
+1. Utilisation d'un ViewModel :
+
+   - C'est l'approche la plus courante et recommandée pour les vues complexes.
+   - Vous créez une nouvelle classe (ViewModel) qui contient des propriétés pour toutes les données dont vous avez besoin dans votre vue.
+   - Cette méthode offre une séparation claire des préoccupations et rend votre code plus facile à maintenir.
+   - Elle est particulièrement utile lorsque vous devez ajouter des propriétés ou des méthodes spécifiques à la vue.
+
+2. Utilisation de Tuple :
+   - Cette méthode est plus simple et peut être utile pour des implémentations rapides ou lorsque vous ne voulez pas créer une classe ViewModel séparée.
+   - Elle est prise en charge dans C# 7.0 et versions ultérieures, ce qui inclut .NET Core 2.0 et supérieur.
+   - Bien que pratique, elle peut rendre votre code moins lisible si elle est surutilisée, en particulier avec des modèles complexes.
+
+Les deux méthodes vous permettent de typer fortement vos vues, ce qui offre une meilleure vérification à la compilation et un support IntelliSense amélioré.
+
+Quelques points supplémentaires à considérer :
+
+1. Si vous utilisez beaucoup de combinaisons différentes de modèles, vous voudrez peut-être créer plusieurs ViewModels pour garder les choses organisées.
+
+2. Pour des cas très simples où vous avez juste besoin de passer deux ou trois propriétés, vous pourriez aussi utiliser le ViewBag ou ViewData dynamiques, mais ils sont généralement déconseillés pour des scénarios complexes car ils ne sont pas fortement typés.
+
+3. Si vous travaillez avec des formulaires qui doivent être mappés à plusieurs modèles, vous pourriez avoir besoin de créer des binders de modèle personnalisés ou d'utiliser des préfixes de formulaire pour lier correctement les données.
+
+4. N'oubliez pas que l'utilisation de plusieurs modèles peut parfois indiquer que votre vue fait trop de choses. Envisagez de diviser les vues complexes en vues partielles ou en composants si elles deviennent trop difficiles à gérer.
+
+Souhaitez-vous que je développe davantage une partie de ces méthodes ou que je vous fournisse un exemple de gestion des soumissions de formulaires avec plusieurs modèles ?
+
 ## La suite : filtres, layouts, barre de navigation, authentification et autorisation
 
 ## La suite: Deploiement de l'application, securité et tests
