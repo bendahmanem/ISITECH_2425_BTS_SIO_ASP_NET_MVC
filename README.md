@@ -504,6 +504,15 @@ public InstructorController(SchoolContext context)
 }
 ```
 
+#### Les etapes de mise en place de Entity Framework Core
+
+1. Créer vos classes d'entité (modèles)
+2. Installer les packages nécessaires (Microsoft.EntityFrameworkCore, Microsoft.EntityFrameworkCore.Design, Pomelo.EntityFrameworkCore.MySql, Microsoft.EntityFrameworkCore.Tools)
+3. Créer une classe qui hérite de DbContext
+4. Configurer la methode OnModelCreating pour definir les relations entre les tables
+5. Creer une migration avec la commande `dotnet ef migrations add InitialCreate`
+6. Appliquer la migration avec la commande `dotnet ef database update`
+
 ## La suite : filtres, layouts, barre de navigation, authentification et autorisation
 
 ## La suite: Deploiement de l'application, securité et tests
