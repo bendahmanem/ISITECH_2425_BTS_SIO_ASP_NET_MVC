@@ -706,4 +706,12 @@ Au lieu de copier le code ci-dessus au debut de chaque vue, nous pouvons utilise
 - Pour chaque vue vous devez choisir un titre unique pour la page et le placer dans la propriété ViewBag.Title
 - Si vous aviez du css et/ou du Js dans la vue, vous pouvez les placer dans le layout.
 
+#### Ajouter des liens vers différentes actions et contrôleurs
+
+Nous allons utiliser des tag helpers pour ajouter des liens vers différentes actions et contrôleurs. Nous allons également ajouter une barre de navigation à notre layout. Il faut s'assurer de preciser le controleur pour chaque action.
+
+```html
+<a asp-action="Index" asp-controller="Home">Home</a>
+```
+
 ## La suite: Deploiement de l'application, securité et tests
