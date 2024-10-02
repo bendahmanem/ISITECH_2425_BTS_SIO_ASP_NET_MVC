@@ -647,6 +647,63 @@ Quelques points supplémentaires à considérer :
 
 Souhaitez-vous que je développe davantage une partie de ces méthodes ou que je vous fournisse un exemple de gestion des soumissions de formulaires avec plusieurs modèles ?
 
-## La suite : filtres, layouts, barre de navigation, authentification et autorisation
+## filtres, layouts, barre de navigation, authentification et autorisation
+
+### Apporter la cohérence à nos pages avec les Razor Layouts
+
+#### Creer un Layout
+
+Les layouts sont des fichiers `cshtml` placés dans le dossier `Views/Shared`. Dans ce dossier **Shared** nous allons créer un fichier **\_Layout.cshtml**.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="~/css/site.css" />
+  </head>
+  <body>
+    <div>@RenderBody()</div>
+  </body>
+</html>
+```
+
+Vous pouvez considerer un layout comme de l'HTML commun à toutes les pages de votre site. Il contient les balises `<head>`, `<body>`, `<html>` et d'autres balises communes à toutes les pages de votre site, on remarque :
+
+- Le titre provient de la propriété ViewBag.Title.
+- Le contenu de la page est rendu à l'aide de la méthode RenderBody().
+  - c'est la que le contenu des vues sera affiché
+  - si vous placer du code html dans le layout, il sera affiché sur toutes les pages.
+
+#### Utiliser un Layout dans une vue
+
+Pour utiliser un layout dans une vue, il suffit de specifier le layout dans la directive `@layout` au debut de la vue.
+
+```html
+@{ Layout = "_Layout"; }
+```
+
+Cette directive permet de placer le contenu de la vue dans le layout.
+
+#### Le fichier \_ViewStart.cshtml
+
+Au lieu de copier le code ci-dessus au debut de chaque vue, nous pouvons utiliser un fichier \_ViewStart.cshtml. Ce fichier est placé dans le dossier Views et son contenu sera appliqué à toutes les vues du dossier.
+
+```html
+@{ Layout = "_Layout"; }
+```
+
+#### Modifier les vues pour utiliser \_ViewStart.cshtml
+
+- ne conservver que le code initalement contenu dans la balise `<body>` de la vue.
+- ne surtout pas supprimer la directive @model de la vue
+- Pour chaque vue vous devez choisir un titre unique pour la page et le placer dans la propriété ViewBag.Title
+- Si vous aviez du css et/ou du Js dans la vue, vous pouvez les placer dans le layout.
 
 ## La suite: Deploiement de l'application, securité et tests
