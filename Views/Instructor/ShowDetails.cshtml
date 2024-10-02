@@ -1,39 +1,27 @@
 ﻿@model Instructor
 
 
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Instructor @Model.LastName Details</title>
-</head>
-
-<body>
-    <h1>Instructor @Model.LastName details</h1>
+<h1>Instructor @Model.LastName details</h1>
 
 
-    @*{
-    let's use data annotations now }
-    *@
-    <p><label asp-for="FirstName"></label>: @Html.DisplayFor(model => model.FirstName)</p>
-    <p> <label asp-for="LastName"></label>
-        : @Html.DisplayFor(model => model.LastName)</p>
-    <p> <label asp-for="IsTenured"></label>
-        : @Html.DisplayFor(model => model.IsTenured)</p>
-    <p> <label asp-for="Rank"></label>
-        : @Html.DisplayFor(model => model.Rank)</p>
-    <p>: @Html.DisplayFor(model => model.HiringDate)</p>
+@*{
+let's use data annotations now }
+*@
+<p><label asp-for="FirstName"></label>: @Html.DisplayFor(model => model.FirstName)</p>
+<p> <label asp-for="LastName"></label>
+    : @Html.DisplayFor(model => model.LastName)</p>
+<p> <label asp-for="IsTenured"></label>
+    : @Html.DisplayFor(model => model.IsTenured)</p>
+<p> <label asp-for="Rank"></label>
+    : @Html.DisplayFor(model => model.Rank)</p>
+<p>: @Html.DisplayFor(model => model.HiringDate)</p>
 
-    @*{
-    same with the use of labels and asp-for now
-    }*@
+@*{
+same with the use of labels and asp-for now
+}*@
 
 
-    <a asp-action="Index">go to Index</a>
-    <br />
-    @Html.ActionLink("go to Index", "Index")
-    </p>
-</body>
-
-</html>
+<a asp-action="Index">go to Index</a>
+<br />
+@Html.ActionLink("go to Index", "Index")
+</p>
