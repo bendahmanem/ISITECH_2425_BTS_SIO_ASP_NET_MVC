@@ -906,4 +906,209 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 ```
 
+#### Creation du controleur AccountController
+
+Nous allons creer un controleur AccountController et configurer les actions Login et Logout dans une premiere etape.
+
+```csharp
+public class AccountController : Controller
+{
+    private readonly SignInManager<ApplicationUser> _signInManager; // permet de gerer la connexion et la deconnexion des utilisateurs, nous est fourni par ASP.NET Core Identity
+
+    public AccountController(SignInManager<ApplicationUser> signInManager)
+    {
+        _signInManager = signInManager; // Signin manager est injecté dans le constructeur,
+        // c'est une classe generique qui prend en parametre ApplicationUser
+    }
+
+    public IActionResult Login()
+    {
+        return View(); // Affiche la vue Login
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        }
+
+        return View(model);
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+
+        return RedirectToAction("Index", "Home");
+    }
+}
+```
+
+Pensez a creer le LoginViewModel qui contiendra les proprietes Username, Password et RememberMe:
+
+```csharp
+public class LoginViewModel
+{
+    [Required]
+    [Required(ErrorMessage = "The Username field is required.")]
+    public string UserName { get; set; }
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [Display(Name = "Remember me?")]
+    public bool RememberMe { get; set; }
+}
+```
+
+Assurez vous d'utiliser la directive @using ASPBookProject.ViewModels dans le fichier \_ViewImports.cshtml pour pouvoir utiliser le LoginViewModel dans la vue.
+
+##### Creation de la vue Login
+
+```html
+@model LoginViewModel @{ ViewData["Title"] = "Login"; }
+
+<h1>Login</h1>
+<form asp-action="Login" asp-controller="Account" method="post">
+  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+  <div class="form-group row">
+    <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-10">
+      <input asp-for="UserName" class="form-control" />
+      <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label asp-for="Password" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-10">
+      <input asp-for="Password" class="form-control" />
+      <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-10 offset-sm-2">
+      <div class="form-check <input asp-for="RememberMe" class="form-check
+      <label class="form-check label" asp-for="RememberMe">Remember me?</label>
+      <span asp-validation-for="RememberMe" class="text-danger"></span>
+    </div>
+  </div>
+  <br />
+  <input type="submit" value="Login" class="btn btn-primary" />
+</form>
+```
+
+##### Creation de l'action Login (POST)
+
+Nous allons recuperer les informations de login soumises par le formulaire (LoginViewModel).
+
+```csharp
+[HttpPost]
+public async Task<IActionResult> Login(LoginViewModel model)
+{
+    if (ModelState.IsValid)
+    {
+        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+    }
+
+    return View(model);
+}
+```
+
+##### Creation de l'action Logout
+
+```csharp
+public async Task<IActionResult> Logout()
+{
+    await _signInManager.SignOutAsync();
+
+    return RedirectToAction("Index", "Home");
+}
+```
+
+##### Creation de la vue Logout (optionnel)
+
+```html
+<h1>Logout</h1>
+<p>You have been logged out.</p>
+```
+
+##### Afficher l'utilisateur connecté dans le layout (barre de navigation)
+
+On va utiliser le tag helper `User.Identity.Name` pour afficher le nom de l'utilisateur connecté dans la barre de navigation.
+
+```html
+@if (User.Identity.IsAuthenticated) {
+<span class="navbar-text">Hello, @User.Identity.Name!</span>
+<a asp-action="Logout" asp-controller="Account">Logout</a>
+} else {
+<a asasp-action="Login" asp-controller="Account">Login</a>
+}
+```
+
+##### Creation de comptes utilisateurs avec le UserManager
+
+Le UserManager est une classe generique qui permet de gerer les utilisateurs. Il est fourni par ASP.NET Core Identity. Il permet de creer, de mettre a jour, de supprimer, de verrouiller, de deverrouiller, de generer des tokens, de generer des mots de passe, de generer des jetons de reinitialisation de mot de passe, etc.
+
+Pour creer un utilisateur, nous devons injecter le UserManager dans le constructeur du controleur AccountController.
+
+```csharp
+private readonly UserManager<ApplicationUser> _userManager;
+
+public AccountController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+{
+    _signInManager = signInManager;
+    _userManager = userManager;
+}
+```
+
+Nous allons ajouter une action Register pour permettre aux utilisateurs de creer un compte.
+
+```csharp
+
+public IActionResult Register()
+{
+    return View();
+}
+
+[HttpPost]
+public async Task<IActionResult> Register(RegisterViewModel model)
+{
+    if (ModelState.IsValid)
+    {
+        var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+        var result = await _userManager.CreateAsync(user, model.Password);
+
+        if (result.Succeeded)
+        {
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            return RedirectToAction("Index", "Home");
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+    }
+
+    return View(model);
+}
+```
+
 ## La suite: Deploiement de l'application, securité et tests
