@@ -11,6 +11,12 @@ builder.Services.AddControllersWithViews();
 
 
 
+builder.Services.ConfigureApplicationCookie(o =>
+{
+    o.AccessDeniedPath = "";
+    o.LoginPath = "";
+});
+
 // Enregistrement d'un service 
 builder.Services.AddSingleton<IFakeDataService, FakeDataService>();
 // Assurez vous que cette ligne soit placée avant : var app = builder.Build();
