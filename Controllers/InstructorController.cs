@@ -41,6 +41,7 @@ namespace ASPBookProject.Controllers
         // GET: InstructorController
         public IActionResult Index()
         {
+            Console.WriteLine("Hello from instructor index");
             return View(_dbContext.Instructors); // retourne la vue Index.cshtml
         }
 

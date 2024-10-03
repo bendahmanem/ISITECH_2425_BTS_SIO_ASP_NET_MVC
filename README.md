@@ -714,4 +714,196 @@ Nous allons utiliser des tag helpers pour ajouter des liens vers différentes ac
 <a asp-action="Index" asp-controller="Home">Home</a>
 ```
 
+### La page d'exception pour les developpeurs
+
+Pendant les phases de développement, il est important de voir les exceptions qui se produisent. Pour cela, nous allons ajouter une page d'exception pour les développeurs. Nous devrons ajouter un middleware pour gérer les exceptions.
+
+```csharp
+app.UseDeveloperExceptionPage();
+```
+
+Vous ne devez l'utiliser que pendant les phases de développement. Pour les phases de production, vous devez utiliser un middleware qui gère les exceptions de manière plus sécurisée. En effet, ce genre de pages peut donner des informations sensibles sur votre application : telles que du code source, des informations de connexion à la base de données, etc.
+
+Au sein de votre Programme.cs, vous pouvez ajouter un middleware pour gérer les exceptions de manière plus sécurisée.
+
+```csharp
+// apres l'instruction
+var app = builder.Build();
+
+// ajouter
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    // autre middleware pour les exceptions
+}
+```
+
+Pour tester cette page vous devez vous assurer que la variable d'environnement ASPNETCORE_ENVIRONMENT est définie sur Development. Au sein l'action Index de votre contrôleur Home, vous pouvez ajouter une exception pour tester la page d'exception.
+
+```csharp
+throw new Exception("Une exception s'est produite, nous testons la page d'exception pour les développeurs.");
+```
+
+Notez que pour les erreurs 404 nous n'aurons pas de page d'exception. Nous verrons comment gérer les erreurs 404 dans la section suivante.
+
+### Gestion des erreurs de facon personnalisée
+
+Maintenant nous allons configurer pour que l'utilisateur final voit une page d'erreur personnalisée. En production nous souahitons que l'utilisateur voit une page d'erreur personnalisée plutot que la page d'exception pour les développeurs. Ajoutez les middleware suivants dans votre fichier Program.cs.
+
+```csharp
+app.UseExceptionHandler("/Error/Index");
+app.UseStatusCodePagesWithRedirects("/Error/Index"); // Pour les erreurs 404
+```
+
+Notre program.cs ressemblera à ceci :
+
+```csharp
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error/Index");
+    app.UseStatusCodePagesWithRedirects("/Error/Index");
+}
+```
+
+Vous devez maintenant creer un controleur ErrorController avec une action Index. Cette action affichera la page d'erreur personnalisée.
+
+```csharp
+public class ErrorController : Controller
+{
+    public IActionResult Index()
+    {
+        return View();
+    }
+}
+```
+
+N'oubliez pas de creer la vue Index pour l'action Index du controleur Error. Elle pourra aussi utiiiser le layout.
+
+### Identification, Authentification et Autorisation
+
+- Identification : Qui êtes-vous ?
+  - On peut utiliser un nom d'utilisqateur, une adresse mail, un numero d'employe, de matricule, de securite sociale, etc.
+- Authentification : Pouvez-vous prouver qui vous êtes ?
+  - On peut utiliser un mot de passe, un code pin, une empreinte digitale, un code de verification, etc.
+  - On peut aussi utiliser des certificats, des cartes à puce, des clés USB, etc.
+- Autorisation : Qu'êtes-vous autorisé à faire ?
+  - On peut etre autorisé à lire, à écrire, à supprimer, à modifier, à créer, etc.
+
+#### Introduction à ASP .NET Core Identity
+
+Nous allons utiliser ASP.NET Core Identity pour gérer l'authentification et l'autorisation. ASP.NET Core Identity est un framework qui permet de gérer les utilisateurs, les rôles, les claims, les jetons, les mots de passe, etc. Il est très flexible et peut être personnalisé pour répondre à vos besoins. Il fournit des fonctions pretes a l'emploi pour l'authentification et l'autorisation. Pour cela nous allons :
+
+- Installer les packages nécessaires
+- Mettre a jour la classe de contexte de la base de données pour fonctionner avec Identity
+- Configurer et enregistrer Identity dans le conteneur de services
+- Configurer les middlewares d'autentification et d'autorisation
+- Implementez les differentes actions pour l'authentification et l'autorisation:
+  - Enregistrer de nouveaux utilisateurs
+  - Se connecter
+  - Se deconnecter
+- Nous allons ensuite restrindre l'accès à certaines pages de notre application
+
+##### Installer les packages nécessaires
+
+Installez les paquets suivants :
+
+- Microsoft.AspNetCore.Identity.EntityFrameworkCore
+- Microsoft.AspNetCore.Identity.UI
+
+##### Definition de la classe ApplicationUser (derivee de IdentityUser)
+
+Dans cette etape nous decidons de gerer nos utilisateurs avec la classe IdentityUser fournie par ASP.NET Core Identity. Nous allons creer une classe ApplicationUser qui derive de IdentityUser ou utiliser une classe existante. Les proprietes de la classe ApplicationUser seront stockées dans la table AspNetUsers de la base de données. Elles incluent entre autres :
+
+```csharp
+public virtual string UserName { get; set; }
+public virtual string NormalizedUserName { get; set; }
+public virtual string Email { get; set; }
+public virtual string NormalizedEmail { get; set; }
+public virtual bool EmailConfirmed { get; set; }
+public virtual string PasswordHash { get; set; }
+public virtual string SecurityStamp { get; set; }
+public virtual string ConcurrencyStamp { get; set; }
+public virtual string PhoneNumber { get; set; }
+public virtual bool PhoneNumberConfirmed { get; set; }
+public virtual bool TwoFactorEnabled { get; set; }
+public virtual DateTimeOffset? LockoutEnd { get; set; }
+public virtual bool LockoutEnabled { get; set; }
+public virtual int AccessFailedCount { get; set; }
+```
+
+Si nous decidons d'utiliser une classe existante, il suffit que cette derniere derive de IdentityUser.
+
+##### Mise à jour de la classe de contexte de la base de données
+
+Remplacez :
+
+```csharp
+
+public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
+}
+```
+
+par :
+
+```csharp
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
+}
+```
+
+Notez que vous n'avez pas a creer de dbSet pour la classe ApplicationUser. IdentityDbContext<ApplicationUser> le fait pour vous.
+
+##### enregistrer Identity dans le conteneur de services
+
+Apres l'ajout du DbContext, nous devons enregistrer Identity dans le conteneur de services. Pour cela, ajoutez le code suivant dans la classe Program.cs.
+
+```csharp
+builcder.Services.AddDefaultIdentity<ApplicationUser>(options =>
+  {
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
+
+    options.User.RequireUniqueEmail = true;
+  }
+).AddEntityFrameworkStores<ApplicationDbContext>();
+```
+
+##### Configurer les middlewares d'authentification et d'autorisation
+
+Au sein du program.cs :
+
+```csharp
+
+app.UseStaticFiles();
+app.UseAuthentication();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+```
+
 ## La suite: Deploiement de l'application, securité et tests
